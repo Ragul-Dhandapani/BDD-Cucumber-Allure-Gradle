@@ -5,3 +5,4 @@ build
 target/
 target
 allure-results
+gradle/
