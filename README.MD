@@ -1,4 +1,4 @@
-###### Cucumber With Allure Integration using Gradle
+# Cucumber With Allure Integration using Gradle
 
 1. Do gradle clean build --refresh-dependencies <br>
 2. Execute the gradle task "cucumber" with "gradle cucumber allureReport". The "cucumber" gradle task will perform internally "downloadAllure" task and its get downloaded in your project directory (.allure) <br>  
