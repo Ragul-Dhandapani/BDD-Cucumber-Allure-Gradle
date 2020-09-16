@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.8.1'
+    id 'maven'
+}
+
+group 'com.cucumber-allure-gradle-integration'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+
+def cucumberVersion = '4.8.1'
+def allureVersion = '2.8.1'
+def allurePluginVersion = '2.13.3'
+def aspectjversion='1.9.5'
+//def cucumberVersion = '5.5.0'
+//def allurePluginVersion = '2.14-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "io.cucumber:cucumber-java:${cucumberVersion}"
+    compile "io.cucumber:cucumber-junit:${cucumberVersion}"
+    compile group: 'io.qameta.allure', name: 'allure-cucumber4-jvm', version: "${allurePluginVersion}"
+    compile group:'org.aspectj',name:'aspectjweaver',version:"${aspectjversion}"
+    compile 'org.apache.maven.plugins:maven-surefire-plugin:3.0.0-M5'
+
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+//    compile group: 'io.qameta.allure', name: 'allure-cucumber5-jvm', version: "${allurePluginVersion}"
+//    compile group: 'com.github.invictum', name: 'serenity-allure-integration', version: '1.0.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom compile
+    }
+}
+
+/*
+Optional test task
+ */
+test{
+    jvmArgs "javaagent:org/aspectj/aspectjweaver/${aspectjversion}/aspectjweaver-${aspectjversion}.jar\"\n" +
+            "-Dcucumber.options=\"--plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm\""
+}
+
+// Note: For CucumberWithSerenity (you should have less than 2 version to support allure cucumber, serenity version 2 or above internally
+// has cucumber latest(5 version or above) which is not supported for allurecucumber4 jvm plugin and its required allure-cucumber5jvm plugin to support 
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            systemProperty("allure.results.directory", "build/allure-results")
+
+            main = "io.cucumber.core.cli.Main" //Cucumber Client to run the tests
+//            main = "net.serenitybdd.cucumber.cli.Main"  // For Serenity
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty',
+                                        '--plugin', 'io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm',
+//                    '--plugin', 'io.qameta.allure.cucumber5jvm.AllureCucumber5Jvm',
+                    '--glue',
+                    'com.cybg.cucumber', 'src/main/resources']
+        }
+    }
+}
+
+allure {
+    version = allureVersion
+    autoconfigure = true
+    aspectjweaver = true
+}
+
+cucumber.finalizedBy 'allureReport'
