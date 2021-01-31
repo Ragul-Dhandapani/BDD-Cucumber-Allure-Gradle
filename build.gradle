@@ -68,7 +68,7 @@ task cucumber() {
                                         '--plugin', 'io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm',
 //                    '--plugin', 'io.qameta.allure.cucumber5jvm.AllureCucumber5Jvm',
                     '--glue',
-                    'com.cybg.cucumber', 'src/main/resources']
+                    'com.diff.cucumber', 'src/main/resources']
         }
     }
 }
