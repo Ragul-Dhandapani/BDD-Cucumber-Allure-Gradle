@@ -5,3 +5,13 @@
 3. After the execution - Refer the build folder to view allure-results and reports folder (index.html)
 
 _**Note:**_ If you would like to integrate **CucumberWithSerenity** latest or above 2 version then you must have updated **allure-cucumber5jvm** plugin which is not yet released by allure team at this date (16/09/2020). 
+
+# Shortcut
+```bash
+cd project
+gradle clean build --refresh-dependencies
+gradle cucumber allureReport
+cd build 
+allure serve
+
+```
